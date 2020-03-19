@@ -14,18 +14,17 @@ label = df['sign']
 data = df.drop(['Cell', 'sign'], axis=1)
 #print(label.head())
 #print(data.head())
-X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.2)
 
 scaler = StandardScaler()
-scaler.fit(X_train.fillna(0))
+scaler.fit(data.fillna(0))
 
 selected = SelectFromModel(LogisticRegression(penalty='l1'))
-selected.fit(scaler.transform(X_train.fillna(0)), y_train)
+selected.fit(scaler.transform(data.fillna(0)), label)
 
 selected.get_support()
 
-selected_feat = X_train.columns[(selected.get_support())]
-print('total features: {}'.format((X_train.shape[1])))
+selected_feat = data.columns[(selected.get_support())]
+print('total features: {}'.format((data.shape[1])))
 print('selected features: {}'.format(len(selected_feat)))
 print('features with coefficients shrank to zero: {}'.format(
       np.sum(selected.estimator_.coef_ == 0)))
