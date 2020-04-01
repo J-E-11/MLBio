@@ -27,14 +27,9 @@ data_f = df[np.intersect1d(df.columns, list)]
 ########
 
 model = svm.SVC(kernel='linear')
-svc_score = cross_validate(model, data_f, label, cv=10, scoring=['accuracy', 'precision', 'recall', 'roc_auc'])
+svc_score = cross_validate(model, data_f, label, cv=10, scoring='accuracy')
 svc_results = pd.DataFrame.from_dict(svc_score)
 y_pred = cross_val_predict(model, data_f, label, cv=10)
-#auc_svm = roc_auc_score(label, y_pred, average='weighted', multi_class='ovo')
-#svc_auc = pd.DataFrame.from_dict(auc_svm)
-
-#svc_results.to_csv('svc_results.csv')
-#svc_auc.to_csv('svc_auc.csv')
 
 
 cmtx_svm = pd.DataFrame(
