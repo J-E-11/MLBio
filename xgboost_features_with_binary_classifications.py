@@ -156,10 +156,10 @@ auc_rf = roc_auc_score(label, y_pred_rf)
 fpr_rf, tpr_rf, thresholds_rf = roc_curve(label, y_pred_rf)
 
 
-plt.plot(fpr_svm, tpr_svm, label='SVM = %0.2f' % auc_svm, color="#ffcc00", linewidth=2)
-plt.plot(fpr_lasso, tpr_lasso, label='Lasso = %0.2f' % auc_lasso, color="#5dbcd2", linewidth=2)
-plt.plot(fpr_xgb, tpr_xgb, label='XGB = %0.2f' % auc_xgb, color="#cb42f5", linewidth=2)
-plt.plot(fpr_rf, tpr_rf, label='RF = %0.2f' % auc_rf, color="#f54242", linewidth=2)
+#plt.plot(fpr_svm, tpr_svm, label='SVM = %0.2f' % auc_svm, color="#", linewidth=2)
+plt.plot(fpr_lasso, tpr_lasso, label='Lasso = %0.2f' % auc_lasso, color="#ffcc00", linewidth=2)
+plt.plot(fpr_xgb, tpr_xgb, label='XGB = %0.2f' % auc_xgb, color="#5dbcd2", linewidth=2)
+plt.plot(fpr_rf, tpr_rf, label='RF = %0.2f' % auc_rf, color="#cb42f5", linewidth=2)
 plt.plot([0, 1], [0, 1], '--', color="#878787")  # random predictions curve
 plt.xlim([0.0, 1.0])
 plt.ylim([0.0, 1.0])
