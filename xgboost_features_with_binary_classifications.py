@@ -29,7 +29,7 @@ data = df2.drop(['Cell', 'sign'], axis=1)
 
 data_matrix = xgb.DMatrix(data, label)
 
-params = {'max_depth': 5, 'eta': 0.1, 'objective':'binary:logistic'} #params need to be explicity stated, binary:logistic chosen since that is default in API settings
+params = {'max_depth': 5, 'eta': 0.1, 'objective':'binary:logistic'}
 
 trained = xgb.train(params, data_matrix)
 #xgb.plot_importance(trained)
