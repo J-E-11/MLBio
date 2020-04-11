@@ -1,5 +1,7 @@
 '''
-Calculate ROC AUC for xgboost clustering on multiple classes
+Author: Jinwan Huang
+Calculate ROC AUC, precision,recall for xgboost clustering on 3 classes
+And also on different feature numbers selected by xgboost
 '''
 from statistics import mean
 import numpy as np
@@ -17,12 +19,8 @@ from sklearn.preprocessing import LabelBinarizer
 def multiclass_roc_auc(truth, pred, average=None):
     lb = LabelBinarizer()
     lb.fit([0,1,2])
-
     truth = lb.transform(truth)
     pred = lb.transform(pred)
-    #print(truth)
-    #print(pred)
-
     try:
         tmp = roc_auc_score(truth, pred, average=average)
     except:
@@ -37,65 +35,40 @@ def iter_(name):
     data = df.drop(['Cell', 'sign'], axis=1)
 
     feature_list = pd.read_csv(name+'.csv')
-#feature_list.reset_index(drop=True, inplace=True)
     feature_list = feature_list.drop(['score'],axis=1)
-    print(feature_list.head())
     feature_list = feature_list.values.tolist()
     feature_list = [k[0] for k in feature_list]
-    print(feature_list)
     data = data[feature_list]
-
-    print(label.head())
-    print(data.head())
-#X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.2)
 
     kf = KFold(n_splits=10)
     scores = []
     auc = []
     for train_index, test_index in kf.split(data):
-        X_train, X_test, y_train, y_test = data.iloc[train_index], data.iloc[test_index], label.iloc[train_index], label.iloc[test_index]
- 
-
+        X_train, X_test, y_train, y_test = data.iloc[train_index], \
+        data.iloc[test_index], label.iloc[train_index], label.iloc[test_index]
         dtrain = xgb.DMatrix(X_train, label=y_train)
-
         dtest = xgb.DMatrix(X_test, label=y_test)
-
         param = {'max_depth': 5, 'eta': 0.1, 'objective': 'multi:softmax', 'num_class':3}
         num_round = 50
         evallist = [(dtest, 'eval'), (dtrain, 'train')]
         bst = xgb.train(param, dtrain, num_round, evallist)
         ypred = bst.predict(dtest)
+        
         accuracy = accuracy_score(y_test, ypred)
         scores.append(accuracy)
         roc_ = multiclass_roc_auc(y_test, ypred)
         auc.append(roc_)
-#print(accuracy)
+
     f.write(name+"\n\rscores:"+str(scores)+"\n\rauc:"+str(auc)+"\n\r"+str(mean(scores))+" " +str(np.nanmean(auc, axis=0)))
-    # f.write(name,"\n\rscores:",scores,"\n\rauc:",auc,"\n\r",mean(scores), np.nanmean(auc, axis=0))
     print(scores)
     print(auc)
     print(mean(scores), np.nanmean(auc, axis=0))
     f.close()
 
 f = open('result.txt','a')
-#f_ = open('count.csv')
 df = pd.read_csv('merged.csv',index_col=0)
-print(df.head())
 label = df['sign']
 data = df.drop(['Cell', 'sign'], axis=1)
-'''
-feature_list = pd.read_csv('gene_score.csv')
-#feature_list.reset_index(drop=True, inplace=True)
-feature_list = feature_list.drop(['score'],axis=1)
-print(feature_list.head())
-feature_list = feature_list.values.tolist()
-feature_list = [k[0] for k in feature_list]
-print(feature_list)
-data = data[feature_list]
-'''
-print(label.head())
-print(data.head())
-#X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.2)
 
 kf = KFold(n_splits=10)
 scores = []
@@ -103,8 +76,7 @@ auc = []
 for train_index, test_index in kf.split(data):
     X_train, X_test, y_train, y_test = data.iloc[train_index], data.iloc[test_index], label.iloc[train_index], label.iloc[test_index]
 
-    dtrain = xgb.DMatrix(X_train, label=
-    y_train)
+    dtrain = xgb.DMatrix(X_train, label=y_train)
 
     dtest = xgb.DMatrix(X_test, label=y_test)
 
@@ -117,7 +89,6 @@ for train_index, test_index in kf.split(data):
     scores.append(accuracy)
     roc_ = multiclass_roc_auc(y_test, ypred)
     auc.append(roc_)
-#print(accuracy)
 f.write("all features\n\rscores:"+str(scores)+"\n\rauc:"+str(auc)+"\n\r"+str(mean(scores))+" " +str(np.nanmean(auc, axis=0)))
 print(scores)
 print(auc)
