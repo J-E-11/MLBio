@@ -27,6 +27,16 @@ df2 = df[df.sign != 2]
 label = df2['sign']
 data = df2.drop(['Cell', 'sign'], axis=1)
 
+
+#for data with batch effect removed
+'''df = pd.read_csv('merged_rm_be.csv')
+df = df.drop(df.columns[[0]], axis=1)
+df2 = df[df.sign!=2]
+cleaned_data = df2.dropna()
+
+label = cleaned_data['sign']
+data = cleaned_data.drop(['sign'], axis=1)'''
+
 ##LASSO feature selection
 std_data = preprocessing.scale(data)
 model = SelectFromModel(LogisticRegression(penalty='l1', solver='liblinear'))
@@ -45,7 +55,7 @@ print('features with coefficients shrank to zero: {}'.format(
 ########
 
 selected_feat.columns = ['genes']
-selected_feat.to_csv('features_generated_by_lasso.csv')
+selected_feat.to_csv('selected_features_binary_batch.csv')
 list_selected_features = selected_feat['genes'].to_list()
 data_f = data[np.intersect1d(data.columns, list_selected_features)]
 

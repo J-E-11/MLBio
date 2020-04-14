@@ -27,6 +27,15 @@ df2 = df[df.sign != 2]
 label = df2['sign']
 data = df2.drop(['Cell', 'sign'], axis=1)
 
+#for data with batch effect removed
+'''df = pd.read_csv('merged_rm_be.csv')
+df = df.drop(df.columns[[0]], axis=1)
+df2 = df[df.sign!=2]
+cleaned_data = df2.dropna()
+
+label = cleaned_data['sign']
+data = cleaned_data.drop(['sign'], axis=1)'''
+
 data_matrix = xgb.DMatrix(data, label)
 
 params = {'max_depth': 5, 'eta': 0.1, 'objective':'binary:logistic'}
@@ -41,7 +50,7 @@ feature_importance_table.columns = ['Features', 'Weights']
 #plot the feature importance
 fts = feature_importance_table['Features']
 fts = pd.DataFrame.from_dict(fts)
-fts.to_csv('features_generated_by_xgboost.csv')
+fts.to_csv('features_from_xgboost_binary_batch.csv')
 weights = feature_importance_table['Weights']
 
 list_selected_features = fts['Features'].to_list()
@@ -79,7 +88,7 @@ ax.set_ylabel("True")
 ax.set_title("Confusion Matrix for Lasso")
 
 ##SVM
-print('Doing SVM Classification')
+print('Doing SVM Classification') #does not seem to stop running (probably cant use the features provided)
 model_svm = svm.SVC(kernel='linear', probability=True)
 svc_score = cross_validate(model_svm, data_f, label, cv=skfold, scoring=['accuracy', 'precision', 'recall', 'f1'])
 svc_results = pd.DataFrame.from_dict(svc_score)
