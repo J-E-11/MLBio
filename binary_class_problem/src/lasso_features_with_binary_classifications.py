@@ -1,43 +1,34 @@
 '''@author Kaur, Sukhleen'''
 
-import pandas as pd
 import numpy as np
-from sklearn import preprocessing
-from sklearn.linear_model import Lasso, LogisticRegression, LogisticRegressionCV
-from sklearn.feature_selection import SelectFromModel
+import pandas as pd
 import seaborn as sns
-
-from sklearn.model_selection import cross_validate
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import cross_val_predict
-
-from sklearn import svm
-from sklearn.metrics import confusion_matrix
-
-from sklearn.metrics import roc_auc_score
-from sklearn.metrics import roc_curve, auc
-
-from matplotlib import pyplot as plt
 import xgboost as xgb
+from matplotlib import pyplot as plt
+from sklearn import preprocessing, svm
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_selection import SelectFromModel
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, roc_auc_score, roc_curve
+from sklearn.model_selection import (StratifiedKFold, cross_val_predict,
+                                     cross_validate)
 
-from sklearn.model_selection import StratifiedKFold
-from pylab import savefig
-
-df = pd.read_csv('merged.csv',index_col=0)
+#for original data
+'''df = pd.read_csv('merged.csv',index_col=0)
 df2 = df[df.sign != 2]
 
 label = df2['sign']
-data = df2.drop(['Cell', 'sign'], axis=1)
+data = df2.drop(['Cell', 'sign'], axis=1)'''
 
 
 #for data with batch effect removed
-'''df = pd.read_csv('merged_rm_be.csv')
+df = pd.read_csv('merged_rm_be.csv')
 df = df.drop(df.columns[[0]], axis=1)
 df2 = df[df.sign!=2]
 cleaned_data = df2.dropna()
 
 label = cleaned_data['sign']
-data = cleaned_data.drop(['sign'], axis=1)'''
+data = cleaned_data.drop(['sign'], axis=1)
 
 ##LASSO feature selection
 std_data = preprocessing.scale(data)
@@ -52,9 +43,6 @@ print('total features: {}'.format((data.shape[1])))
 print('selected features: {}'.format(len(selected_feat)))
 print('features with coefficients shrank to zero: {}'.format(
       np.sum(model.estimator_.coef_ == 0)))
-
-
-########
 
 selected_feat.columns = ['genes']
 selected_feat.to_csv('selected_features_binary_batch.csv')
@@ -80,7 +68,7 @@ y_pred_lasso_df = pd.DataFrame.from_dict(y_pred_lasso_prob)
 y_pred_lasso_df.columns = ['Diagnosis', 'Remission']
 y_pred_lasso_POS = y_pred_lasso_df['Remission']
 
-##Conf Matrix
+##Conf Matrix LASSO
 cmtx_svm_Lasso = pd.DataFrame(
     confusion_matrix(label, y_pred_lasso, normalize='true', labels=[0, 1]),
     index=['Diagnosis', 'Remission'],
@@ -108,7 +96,7 @@ y_pred_svc_df = pd.DataFrame.from_dict(y_pred_svc_prob)
 y_pred_svc_df.columns = ['Diagnosis', 'Remission']
 y_pred_svc_POS = y_pred_svc_df['Remission']
 
-##Conf Matrix
+##Conf Matrix SVM
 cmtx_svm_SVC = pd.DataFrame(
     confusion_matrix(label, y_pred_svc, normalize='true', labels=[0, 1]),
     index=['Diagnosis', 'Remission'],
@@ -136,6 +124,7 @@ y_pred_xgb_df = pd.DataFrame.from_dict(y_pred_xgb_prob)
 y_pred_xgb_df.columns = ['Diagnosis', 'Remission']
 y_pred_xgb_POS = y_pred_xgb_df['Remission']
 
+##Conf Matrix XGB
 cmtx_svm_XGB = pd.DataFrame(
     confusion_matrix(label, y_pred_xgb, normalize='true', labels=[0, 1]),
     index=['Diagnosis', 'Remission'],
@@ -163,6 +152,8 @@ y_pred_rf_df = pd.DataFrame.from_dict(y_pred_rf_prob)
 y_pred_rf_df.columns = ['Diagnosis', 'Remission']
 y_pred_rf_POS = y_pred_rf_df['Remission']
 
+
+##Conf Matric RF
 cmtx_svm_RF = pd.DataFrame(
     confusion_matrix(label, y_pred_rf, normalize='true', labels=[0, 1]),
     index=['Diagnosis', 'Remission'],

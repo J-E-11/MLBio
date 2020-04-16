@@ -1,42 +1,34 @@
 '''@author Kaur, Sukhleen'''
 
 from collections import Counter
-import matplotlib.pyplot as plt
-import pandas as pd
+
 import numpy as np
-from sklearn.linear_model import Lasso, LogisticRegression, LogisticRegressionCV
+import pandas as pd
 import seaborn as sns
-
-from sklearn.model_selection import cross_validate
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import cross_val_predict
-
-from sklearn import svm
-from sklearn.metrics import confusion_matrix
-
-from sklearn.metrics import roc_auc_score
-from sklearn.metrics import roc_curve
-
-from matplotlib import pyplot as plt
 import xgboost as xgb
+from matplotlib import pyplot as plt
+from sklearn import svm
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, roc_auc_score, roc_curve
+from sklearn.model_selection import (StratifiedKFold, cross_val_predict,
+                                     cross_validate)
 
-from sklearn.model_selection import StratifiedKFold
-from pylab import savefig
-
-df = pd.read_csv('merged.csv',index_col=0)
+#for original data
+'''df = pd.read_csv('merged.csv',index_col=0)
 df2 = df[df.sign != 2]
 
 label = df2['sign']
-data = df2.drop(['Cell', 'sign'], axis=1)
+data = df2.drop(['Cell', 'sign'], axis=1)'''
 
 #for data with batch effect removed
-'''df = pd.read_csv('merged_rm_be.csv')
+df = pd.read_csv('merged_rm_be.csv')
 df = df.drop(df.columns[[0]], axis=1)
 df2 = df[df.sign!=2]
 cleaned_data = df2.dropna()
 
 label = cleaned_data['sign']
-data = cleaned_data.drop(['sign'], axis=1)'''
+data = cleaned_data.drop(['sign'], axis=1)
 
 data_matrix = xgb.DMatrix(data, label)
 
@@ -49,9 +41,10 @@ k = Counter(feature_importance)
 feature_importance_table = pd.DataFrame.from_dict(k, orient='index').reset_index()
 feature_importance_table.columns = ['Features', 'Weights']
 
-#plot the feature importance
+#feature importance
 fts = feature_importance_table['Features']
 fts = pd.DataFrame.from_dict(fts)
+#fts.to_csv('features_from_xgboost_binary.csv') #features on original data
 fts.to_csv('features_from_xgboost_binary_batch.csv')
 weights = feature_importance_table['Weights']
 
@@ -77,7 +70,7 @@ y_pred_lasso_df = pd.DataFrame.from_dict(y_pred_lasso_prob)
 y_pred_lasso_df.columns = ['Diagnosis', 'Remission']
 y_pred_lasso_POS = y_pred_lasso_df['Remission']
 
-##Conf Matrix
+##Conf Matrix LASSO
 cmtx_svm_Lasso = pd.DataFrame(
     confusion_matrix(label, y_pred_lasso, normalize='true', labels=[0, 1]),
     index=['Diagnosis', 'Remission'],
@@ -91,7 +84,6 @@ ax.set_title("Confusion Matrix for Lasso")
 
 ##SVM 
 '''does not seem to stop running (probably cant use the features provided)
-can be commented out'''
 print('Doing SVM Classification') 
 model_svm = svm.SVC(kernel='linear', probability=True)
 svc_score = cross_validate(model_svm, data_f, label, cv=skfold, scoring=['accuracy', 'precision', 'recall', 'f1'])
@@ -107,7 +99,7 @@ y_pred_svc_df = pd.DataFrame.from_dict(y_pred_svc_prob)
 y_pred_svc_df.columns = ['Diagnosis', 'Remission']
 y_pred_svc_POS = y_pred_svc_df['Remission']
 
-##Conf Matrix
+##Conf Matrix SVM
 cmtx_svm_SVC = pd.DataFrame(
     confusion_matrix(label, y_pred_svc, normalize='true', labels=[0, 1]),
     index=['Diagnosis', 'Remission'],
@@ -117,7 +109,7 @@ cmtx_svm_SVC = pd.DataFrame(
 ax = sns.heatmap(cmtx_svm_SVC, annot=True, cmap=sns.light_palette((210, 90, 60), input="husl"))
 ax.set_xlabel("Predicted")
 ax.set_ylabel("True")
-ax.set_title("Confusion Matrix for SVM")
+ax.set_title("Confusion Matrix for SVM")'''
 
 ##XGBoost
 print('Doing XGBoost Classification')
@@ -135,6 +127,7 @@ y_pred_xgb_df = pd.DataFrame.from_dict(y_pred_xgb_prob)
 y_pred_xgb_df.columns = ['Diagnosis', 'Remission']
 y_pred_xgb_POS = y_pred_xgb_df['Remission']
 
+#Conf Matrix XGB
 cmtx_svm_XGB = pd.DataFrame(
     confusion_matrix(label, y_pred_xgb, normalize='true', labels=[0, 1]),
     index=['Diagnosis', 'Remission'],
@@ -162,6 +155,7 @@ y_pred_rf_df = pd.DataFrame.from_dict(y_pred_rf_prob)
 y_pred_rf_df.columns = ['Diagnosis', 'Remission']
 y_pred_rf_POS = y_pred_rf_df['Remission']
 
+#Conf Matrix RF
 cmtx_svm_RF = pd.DataFrame(
     confusion_matrix(label, y_pred_rf, normalize='true', labels=[0, 1]),
     index=['Diagnosis', 'Remission'],
@@ -189,7 +183,7 @@ auc_rf = roc_auc_score(label, y_pred_rf_POS)
 fpr_rf, tpr_rf, thresholds_rf = roc_curve(label, y_pred_rf_POS)
 
 
-#plt.plot(fpr_svm, tpr_svm, label='SVM = %0.2f' % auc_svm, color="#", linewidth=2)
+#plt.plot(fpr_svm, tpr_svm, label='SVM = %0.2f' % auc_svm, color="#", linewidth=2) #SVM discarded since it did not run
 plt.plot(fpr_lasso, tpr_lasso, label='Lasso = %0.2f' % auc_lasso, color="#ffcc00", linewidth=2)
 plt.plot(fpr_xgb, tpr_xgb, label='XGB = %0.2f' % auc_xgb, color="#5dbcd2", linewidth=2)
 plt.plot(fpr_rf, tpr_rf, label='RF = %0.2f' % auc_rf, color="#cb42f5", linewidth=2)
