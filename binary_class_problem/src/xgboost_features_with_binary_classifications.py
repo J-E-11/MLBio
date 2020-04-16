@@ -1,3 +1,5 @@
+'''@author Kaur, Sukhleen'''
+
 from collections import Counter
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -87,8 +89,10 @@ ax.set_xlabel("Predicted")
 ax.set_ylabel("True")
 ax.set_title("Confusion Matrix for Lasso")
 
-##SVM
-print('Doing SVM Classification') #does not seem to stop running (probably cant use the features provided)
+##SVM 
+'''does not seem to stop running (probably cant use the features provided)
+can be commented out'''
+print('Doing SVM Classification') 
 model_svm = svm.SVC(kernel='linear', probability=True)
 svc_score = cross_validate(model_svm, data_f, label, cv=skfold, scoring=['accuracy', 'precision', 'recall', 'f1'])
 svc_results = pd.DataFrame.from_dict(svc_score)
