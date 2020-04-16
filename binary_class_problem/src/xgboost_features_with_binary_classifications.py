@@ -15,11 +15,13 @@ from sklearn.model_selection import (StratifiedKFold, cross_val_predict,
                                      cross_validate)
 
 #for original data
-'''df = pd.read_csv('merged.csv',index_col=0)
+'''
+df = pd.read_csv('merged.csv',index_col=0)
 df2 = df[df.sign != 2]
 
 label = df2['sign']
-data = df2.drop(['Cell', 'sign'], axis=1)'''
+data = df2.drop(['Cell', 'sign'], axis=1)
+'''
 
 #for data with batch effect removed
 df = pd.read_csv('merged_rm_be.csv')
@@ -82,10 +84,9 @@ ax.set_xlabel("Predicted")
 ax.set_ylabel("True")
 ax.set_title("Confusion Matrix for Lasso")
 
-##SVM 
-'''does not seem to stop running (probably cant use the features provided)
-print('Doing SVM Classification') 
-model_svm = svm.SVC(kernel='linear', probability=True)
+##SVM does not seem to stop running (probably cant use the features provided)
+'''
+print('Doing SVM Classification')model_svm = svm.SVC(kernel='linear', probability=True)
 svc_score = cross_validate(model_svm, data_f, label, cv=skfold, scoring=['accuracy', 'precision', 'recall', 'f1'])
 svc_results = pd.DataFrame.from_dict(svc_score)
 print('SVM Acc: %.3f' % svc_results['test_accuracy'].mean(),
@@ -109,7 +110,8 @@ cmtx_svm_SVC = pd.DataFrame(
 ax = sns.heatmap(cmtx_svm_SVC, annot=True, cmap=sns.light_palette((210, 90, 60), input="husl"))
 ax.set_xlabel("Predicted")
 ax.set_ylabel("True")
-ax.set_title("Confusion Matrix for SVM")'''
+ax.set_title("Confusion Matrix for SVM")
+'''
 
 ##XGBoost
 print('Doing XGBoost Classification')

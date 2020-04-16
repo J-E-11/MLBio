@@ -14,11 +14,13 @@ from sklearn.model_selection import (StratifiedKFold, cross_val_predict,
                                      cross_validate)
 
 #for original data
-'''df = pd.read_csv('merged.csv',index_col=0)
+'''
+df = pd.read_csv('merged.csv',index_col=0)
 df2 = df[df.sign != 2]
 
 label = df2['sign']
-data = df2.drop(['Cell', 'sign'], axis=1)'''
+data = df2.drop(['Cell', 'sign'], axis=1)
+'''
 
 
 #for data with batch effect removed
