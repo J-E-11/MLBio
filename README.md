@@ -1,4 +1,4 @@
-# Linear and Non-Linear Models to ClassifySingle-Cell Transcriptomics of Chronic MyeloidLeukemia Patients During Diagnosis and Remission Therapy Development
+# Linear and Non-Linear Models to ClassifySingle-Cell Transcriptomics of Chronic Myeloid Leukemia Patients During Diagnosis and Remission Therapy Development
 
 ##### Group 4: Ana Helena Valdeira Caetano, Jinwan Huang, Rucha Narkhede, Sukhleen Kaur 
 
