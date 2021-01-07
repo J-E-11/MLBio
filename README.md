@@ -1,6 +1,6 @@
 # Linear and Non-Linear Models to Classify Single-Cell Transcriptomics of Chronic Myeloid Leukemia Patients During Diagnosis and Remission Therapy Development
 
-##### Group 4: Ana Helena Valdeira Caetano, Jinwan Huang, Rucha Narkhede, Sukhleen Kaur 
+##### Group 4: Ana Helena Valdeira Caetano, Olivia Huang, Rucha Narkhede, Sukhleen Kaur 
 
 This repository consists of the data used and the code used for the Machine Learning in Bioinformatics (CS4260) course at TU Delft. The purpose of this study was to classify HSC, BCR-ABL<sup>+</sup> Diagnosis and BCR-ABL<sup>+</sup> Remission.
 
